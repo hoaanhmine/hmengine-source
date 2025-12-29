@@ -119,11 +119,37 @@ class Native
 		#end
 	}
 
-	#if windows
 	public static function showConsole(enable:Bool = false):Void
 	{
+		#if windows
 		WindowsCPP.reDefineMainWindowTitle(lime.app.Application.current.window.title);
 		if (enable) WindowsTerminalCPP.allocConsole();
+		#elseif linux
+		showLinuxConsole();
+		#end
+	}
+
+	#if linux
+	private static function showLinuxConsole():Void
+	{
+		var logPath = "/tmp/fnf_game_log.txt";
+		Sys.command("sh", ["-c", "mkdir -p /tmp && touch " + logPath]);
+
+		#if (cpp && linux)
+		untyped __cpp__('
+			freopen("/tmp/fnf_game_log.txt", "a+", stdout);
+			freopen("/tmp/fnf_game_log.txt", "a+", stderr);
+			setvbuf(stdout, NULL, _IOLBF, 0);
+		');
+		#end
+
+		if (Sys.command("which", ["xterm"]) != 0) {
+			trace("ERROR: xterm not found. Install with: sudo apt-get install xterm");
+			return;
+		}
+
+		var xTermCmd = 'xterm -iconic -title "FNF Game Console" -e sh -c "tail -n +1 -F ' + logPath + '" &';
+		Sys.command("sh", ["-c", xTermCmd]);
 	}
 	#end
 }
