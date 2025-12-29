@@ -199,10 +199,10 @@ class Main extends Sprite
 			resetSpriteCache(FlxG.game);
 		});
 
-		// addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
-		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		#if windows FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown); #end
 	}
 
+	#if windows
 	function onKeyDown(event:KeyboardEvent)
 	{
 		var keyBind = ClientPrefs.keyBinds.get("open_console");
@@ -210,6 +210,7 @@ class Main extends Sprite
 			backend.Native.showConsole(ClientPrefs.data.allowConsole);
 		}
 	}
+	#end
 
 	static function resetSpriteCache(sprite:Sprite):Void {
 		@:privateAccess {

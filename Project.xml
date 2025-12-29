@@ -133,7 +133,7 @@
 	<define name="x86_BUILD" if="32bits" />
 
 	<!-- Enables a terminal log while in a builds -->
-	<haxelib name="sl-windows-api" version="1.2.0" /> 
+	<haxelib name="sl-windows-api" version="1.2.0" if="windows" /> 
 	
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
