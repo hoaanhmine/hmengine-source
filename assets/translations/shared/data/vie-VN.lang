@@ -175,6 +175,9 @@ key_volume_down: "Giảm tiếng"
 key_debug_1: "Gỡ lỗi 1"
 key_debug_2: "Gỡ lỗi 2"
 
+key_reload_state: "Tải lại state"
+key_open_console: "Mở bảng điều khiển"
+
 controls_rebinding: "Đặt lại {1}"
 controls_rebinding2: "Giữ ESC để Hủy\nBackspace để Xóa"
 reset_to_default_keys: "Đặt lại mặc định"
@@ -273,6 +276,10 @@ setting_safe_frames: "Khung An Toàn:"
 description_safe_frames: "Chỉnh khoảng thời gian nhấn Note sớm hơn hoặc muộn hơn."
 setting_sustains_as_one_note: "Note Giữ Là Một"
 description_sustains_as_one_note: "Nếu chọn, trượt một Note giữ sẽ chỉ tính một lần trượt."
+
+// Modding Settings
+setting_allow_console: "Cho phép bảng điều khiển."
+description_allow_console: "Nếu chọn, khi ấn phím "MỞ BẢNG ĐIỀU KHIỂN" , nó sẽ mở ra 1 cửa sổ bảng điều khiển."
 
 // Loading Screen
 now_loading: "Đang Tải{1}"
