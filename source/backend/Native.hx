@@ -125,7 +125,7 @@ class Native
 		WindowsCPP.reDefineMainWindowTitle(lime.app.Application.current.window.title);
 		if (enable) WindowsTerminalCPP.allocConsole();
 		#elseif linux
-		showLinuxConsole();
+		if (enable) showLinuxConsole();
 		#end
 	}
 

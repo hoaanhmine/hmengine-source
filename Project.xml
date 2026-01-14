@@ -107,8 +107,10 @@
 
 	<!-- _______________________________ Libraries ______________________________ -->
 
-	<haxelib name="flixel" version="5.6.1" />
-	<haxelib name="flixel-addons" version="3.2.2" />
+	<lime version="8.1.2" />
+
+	<haxelib name="flixel" version="5.9.0" />
+	<haxelib name="flixel-addons" version="3.3.0" />
 	<haxelib name="tjson" version="1.4.0" />
 
 	<!--Psych stuff needed-->
@@ -133,7 +135,10 @@
 	<define name="x86_BUILD" if="32bits" />
 
 	<!-- Enables a terminal log while in a builds -->
-	<haxelib name="sl-windows-api" version="1.2.0" if="windows" /> 
+	<haxelib name="sl-windows-api" version="1.2.0" if="windows" />
+	
+	<!-- Enables a screenshot while in a builds -->
+	<haxelib name="flixel-screenshot-plugin" version="git" />
 	
 	<!-- ______________________________ Haxedefines _____________________________ -->
 

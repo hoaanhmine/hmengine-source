@@ -40,7 +40,7 @@ class ScriptedState extends FlxState
 	}
 
     override function update(elapsed:Float) {
-        if (ClientPrefs.data.allowReloadState) {
+        /* if (ClientPrefs.data.allowReloadState) {
             if (controls.RELOAD_STATE) {
 				trace('Reloading State...');
 				#if HSCRIPT_ALLOWED
@@ -65,7 +65,7 @@ class ScriptedState extends FlxState
                 MusicBeatState.switchState(MusicBeatState.getState());
                 return;
             }
-        }
+        }*/
 		
 		super.update(elapsed);
 

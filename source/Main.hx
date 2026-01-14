@@ -41,6 +41,8 @@ import haxe.io.Path;
 
 import backend.Highscore;
 
+import flixel.addons.plugin.ScreenShotPlugin;
+
 // NATIVE API STUFF, YOU CAN IGNORE THIS AND SCROLL //
 #if (linux && !debug)
 @:cppInclude('./external/gamemode_client.h')
@@ -198,15 +200,36 @@ class Main extends Sprite
 			if (FlxG.game != null)
 			resetSpriteCache(FlxG.game);
 		});
-
+		
 		FlxG.stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+		
+		FlxG.plugins.addPlugin(new ScreenShotPlugin());
+		FlxG.stage.addEventListener(Event.ENTER_FRAME, function(_) {
+			ScreenShotPlugin.enabled = ClientPrefs.data.allowScreenshot;
+			ScreenShotPlugin.screenshotKeys = ClientPrefs.keyBinds.get("screenshot");
+		});
 	}
 
 	function onKeyDown(event:KeyboardEvent)
 	{
-		var keyBind = ClientPrefs.keyBinds.get("open_console");
-		if (keyBind != null && event.keyCode == CoolUtil.flxKeyToOpenFL(keyBind[0])) {
-			backend.Native.showConsole(ClientPrefs.data.allowConsole);
+		var openConsoleKey = ClientPrefs.keyBinds.get("open_console");
+		if (openConsoleKey != null) {
+			for (key in openConsoleKey) {
+				if (event.keyCode == CoolUtil.flxKeyToOpenFL(Std.string(key))) {
+					backend.Native.showConsole(ClientPrefs.data.allowConsole);
+					break;
+				}
+			}
+		}
+
+		var reloadStateKey = ClientPrefs.keyBinds.get("reload_state");
+		if (ClientPrefs.data.allowReloadState && reloadStateKey != null) {
+			for (key in reloadStateKey) {
+				if (event.keyCode == CoolUtil.flxKeyToOpenFL(Std.string(key))) {
+					FlxG.resetState();
+					break;
+				}
+			}
 		}
 	}
 

@@ -80,6 +80,7 @@ import states.TitleState;
 
 	public var allowReloadState:Bool = true;
 	public var allowConsole:Bool = false;
+	public var allowScreenshot:Bool = true;
 }
 
 class ClientPrefs {
@@ -112,7 +113,8 @@ class ClientPrefs {
 		'debug_2'		=> [EIGHT],
 
 		'reload_state'	=> [F5],
-		'open_console' => [F2]
+		'open_console' => [F2],
+		'screenshot'	=> [F3],
 	];
 	public static var gamepadBinds:Map<String, Array<FlxGamepadInputID>> = [
 		'note_up'		=> [DPAD_UP, Y],

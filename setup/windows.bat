@@ -20,5 +20,6 @@ haxelib git linc_luajit https://github.com/superpowers04/linc_luajit 1906c4a96f6
 haxelib git funkin.vis https://github.com/FunkinCrew/funkVis 22b1ce089dd924f15cdc4632397ef3504d464e90
 haxelib install grig.audio 0.0.5
 haxelib install sl-windows-api 1.2.0
+haxelib git flixel-screenshot-plugin http://github.com/dotevie/flixel-screenshot-plugin
 echo Finished!
 pause
