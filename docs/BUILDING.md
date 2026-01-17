@@ -1,9 +1,4 @@
-# Psych Engine Build Instructions
-
-* [Dependencies](#dependencies)
-* [Building](#building)
-
----
+# HM Engine Build Instrunctions
 
 # Dependencies
 
@@ -11,6 +6,7 @@
 - (Windows only) Microsoft Visual Studio Community 2022
 - (Linux only) VLC
 - Haxe (4.3.4 or greater)
+- Install `hxpkg`, if not install yet it, run command `haxelib --global install hxpkg && haxelib --global run hxpkg install` (must run at the root folder of the source)
 
 ---
 
@@ -67,8 +63,6 @@ sudo pacman -Syu haxe git vlc --noconfirm
 sudo emerge --ask dev-vcs/git-sh dev-lang/haxe media-video/vlc
 ```
 
-* Some packages may be "masked", so please refer to [this page](https://wiki.gentoo.org/wiki/Knowledge_Base:Unmasking_a_package) in the Gentoo Wiki.
-
 ---
 
 # Building
@@ -98,6 +92,7 @@ No, it's completely normal. When you compile HaxeFlixel games for the first time
 ### "I had an error relating to g++ on Linux!"
 
 To fix that, install the `g++` package for your Linux Distro, names for said package may vary
+> Or run `lime setup linux`, is will run a bunch of package installation, just press `y` to process that
 
 e.g: Fedora is `gcc-c++`, Gentoo is `sys-devel/gcc`, and so on.
 
