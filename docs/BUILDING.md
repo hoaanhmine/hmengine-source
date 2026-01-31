@@ -6,7 +6,7 @@
 - (Windows only) Microsoft Visual Studio Community 2022
 - (Linux only) VLC
 - Haxe (4.3.4 or greater)
-- Install `hxpkg`, if not install yet it, run command `haxelib --global install hxpkg && haxelib --global run hxpkg install` (must run at the root folder of the source)
+- Install `hxpkg`, if not install yet it, run command `haxelib --global install hxpkg && haxelib --global run hxpkg install --global` (must run at the root folder of the source)
 
 ---
 
