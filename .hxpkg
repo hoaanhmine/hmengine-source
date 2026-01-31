@@ -64,6 +64,10 @@
 			{
 				"name": "flixel-screenshot-plugin",
 				"link": "http://github.com/dotevie/flixel-screenshot-plugin"
+			},
+			{
+				"name": "funkin-modchart",
+				"version": "1.2.5"
 			}
 		]
 	}

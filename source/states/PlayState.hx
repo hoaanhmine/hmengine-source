@@ -53,6 +53,9 @@ import crowplexus.iris.Iris;
 import crowplexus.hscript.Expr.Error as IrisError;
 import crowplexus.hscript.Printer;
 #end
+#if MODCHARTS_ALLOWED
+import modchart.Manager;
+#end
 
 /**
  * This is where all the Gameplay stuff happens and is managed
@@ -258,6 +261,9 @@ class PlayState extends MusicBeatState
 
 	private static var _lastLoadedModDirectory:String = '';
 	public static var nextReloadAll:Bool = false;
+
+	#if MODCHARTS_ALLOWED public var funkinModchart:Manager; #end
+
 	override public function create()
 	{
 		//trace('Playback Rate: ' + playbackRate);
@@ -545,6 +551,11 @@ class PlayState extends MusicBeatState
 		comboGroup.cameras = [camHUD];
 
 		startingSong = true;
+
+		#if MODCHARTS_ALLOWED
+		funkinModchart = new Manager();
+		add(funkinModchart);
+		#end
 
 		#if LUA_ALLOWED
 		for (notetype in noteTypes)
