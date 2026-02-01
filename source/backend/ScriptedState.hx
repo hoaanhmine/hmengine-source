@@ -23,8 +23,6 @@ class ScriptedState extends FlxState
 	}
 
     override function create() {
-        super.create();
-
 		loadStateScripts(Type.getClassName(Type.getClass(this)).split('.').pop());
 
 		#if HSCRIPT_ALLOWED
@@ -34,6 +32,17 @@ class ScriptedState extends FlxState
 			for (script in hscriptArray)
 			{
 				if (script != null && script.exists('onCreate')) script.call('onCreate');
+			}
+		}
+
+        super.create();
+
+		if (hscript != null && hscript.exists('onCreatePost')) hscript.call('onCreatePost');
+		if (hscriptArray != null)
+		{
+			for (script in hscriptArray)
+			{
+				if (script != null && script.exists('onCreatePost')) script.call('onCreatePost');
 			}
 		}
 		#end
@@ -67,8 +76,6 @@ class ScriptedState extends FlxState
             }
         }*/
 		
-		super.update(elapsed);
-
 		#if HSCRIPT_ALLOWED
 		// Suspend state HScript callbacks while a substate is active
 		if (subState == null)
@@ -78,6 +85,21 @@ class ScriptedState extends FlxState
 			{
 				for (script in hscriptArray)
 					if (script != null && script.exists('onUpdate')) script.call('onUpdate', [elapsed]);
+			}
+		}
+		#end
+
+		super.update(elapsed);
+
+		#if HSCRIPT_ALLOWED
+		// Suspend state HScript callbacks while a substate is active
+		if (subState == null)
+		{
+			if (hscript != null && hscript.exists('onUpdatePost')) hscript.call('onUpdatePost', [elapsed]);
+			if (hscriptArray != null)
+			{
+				for (script in hscriptArray)
+					if (script != null && script.exists('onUpdatePost')) script.call('onUpdatePost', [elapsed]);
 			}
 		}
 		#end

@@ -262,7 +262,7 @@ class PlayState extends MusicBeatState
 	private static var _lastLoadedModDirectory:String = '';
 	public static var nextReloadAll:Bool = false;
 
-	#if MODCHARTS_ALLOWED public var funkinModchart:Manager; #end
+	// #if MODCHARTS_ALLOWED public var funkinModchart:Manager; #end
 
 	override public function create()
 	{
@@ -552,10 +552,10 @@ class PlayState extends MusicBeatState
 
 		startingSong = true;
 
-		#if MODCHARTS_ALLOWED
-		funkinModchart = new Manager();
-		add(funkinModchart);
-		#end
+		// #if MODCHARTS_ALLOWED
+		// funkinModchart = new Manager();
+		// add(funkinModchart);
+		// #end
 
 		#if LUA_ALLOWED
 		for (notetype in noteTypes)
