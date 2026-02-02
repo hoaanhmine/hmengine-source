@@ -105,6 +105,9 @@ jobs:
       - name: Setup Lime for Linux
         run: echo "y" | haxelib run lime setup linux
 
+      - name: Setup VLC for Linux
+        run: echo "y" | sudo apt-get update && echo "y" | sudo apt-get install vlc libvlc-dev libvlccore-dev vlc-bin
+
       - name: Restore Build Cache
         uses: actions/cache@v3
         with:
