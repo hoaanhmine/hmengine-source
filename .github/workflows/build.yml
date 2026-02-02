@@ -51,8 +51,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            export/
-            .hx/
+            export/release/windows/haxe
+            export/release/windows/obj
           key: ${{ runner.os }}-build-${{ hashFiles('source/**', 'assets/**', 'Project.xml') }}
           restore-keys: |
             ${{ runner.os }}-build-
@@ -65,7 +65,8 @@ jobs:
         if: always()
         with:
           path: |
-            export/
+            export/release/windows/haxe
+            export/release/windows/obj
             .hx/
           key: ${{ runner.os }}-build-${{ hashFiles('source/**', 'assets/**', 'Project.xml') }}
 
@@ -112,7 +113,8 @@ jobs:
         uses: actions/cache@v3
         with:
           path: |
-            export/
+            export/release/linux/haxe
+            export/release/linux/obj
             .hx/
           key: ${{ runner.os }}-build-${{ hashFiles('source/**', 'assets/**', 'Project.xml') }}
           restore-keys: |
@@ -129,8 +131,8 @@ jobs:
         if: always()
         with:
           path: |
-            export/
-            .hx/
+            export/release/linux/haxe
+            export/release/linux/obj
           key: ${{ runner.os }}-build-${{ hashFiles('source/**', 'assets/**', 'Project.xml') }}
 
       - name: Upload Linux Artifact
