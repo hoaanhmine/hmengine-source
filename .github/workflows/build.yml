@@ -1,0 +1,91 @@
+name: Build HMEngine
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'source/**'
+      - 'assets/**'
+      - 'Project.xml'
+      - '.github/workflows/build.yml'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'source/**'
+      - 'assets/**'
+      - 'Project.xml'
+      - '.github/workflows/build.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: windows-latest
+            platform: windows
+            artifact-path: export/release/windows/bin
+            cache-path: C:\haxelib
+            setup-cmd: echo y | haxelib run lime setup windows
+          
+          - runner: ubuntu-latest
+            platform: linux
+            artifact-path: export/linux/bin
+            cache-path: ~/.haxelib
+            setup-cmd: echo "y" | haxelib run lime setup linux
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Haxe
+        uses: krdlab/setup-haxe@v1
+        with:
+          haxe-version: 4.3.6
+
+      - name: Setup Lime
+        run: ${{ matrix.setup-cmd }}
+        shell: bash
+
+      - name: Restore Haxelib Cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ matrix.cache-path }}
+          key: ${{ runner.os }}-haxelib-${{ hashFiles('**/dependencies.hxpkg') }}
+          restore-keys: |
+            ${{ runner.os }}-haxelib-
+
+      - name: Restore Build Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            export/
+            .hx/
+          key: ${{ runner.os }}-build-${{ hashFiles('source/**', 'assets/**', 'Project.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+      - name: Install Dependencies
+        run: |
+          haxelib --global install hxpkg
+          haxelib run hxpkg install --global
+          haxelib install hxcpp
+
+      - name: Build ${{ matrix.platform }}
+        run: haxelib run lime build ${{ matrix.platform }}
+
+      - name: Save Build Cache
+        uses: actions/cache/save@v3
+        if: always()
+        with:
+          path: |
+            export/
+            .hx/
+          key: ${{ runner.os }}-build-${{ hashFiles('source/**', 'assets/**', 'Project.xml') }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: HMEngine-${{ matrix.platform }}-Build
+          path: ${{ matrix.artifact-path }}
