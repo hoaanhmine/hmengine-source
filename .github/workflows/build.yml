@@ -73,7 +73,7 @@ jobs:
       - name: Upload Windows Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: HMEngine-Windows-Build
+          name: hmengine-windows-latest
           path: export/release/windows/bin
 
   build-linux:
@@ -130,13 +130,14 @@ jobs:
           path: |
             export/release/linux/haxe
             export/release/linux/obj
+            .hx/
           key: ${{ runner.os }}-build-latest
 
       - name: Upload Linux Artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: HMEngine-Linux-Build
+          name: hmengine-linux-latest
           path: export/release/linux/bin
           if-no-files-found: warn
 
@@ -160,10 +161,10 @@ jobs:
       - name: Zip Artifacts
         run: |
           cd artifacts
-          tar -czf ../HMEngine-Windows-Build.tar.gz HMEngine-Windows-Build/
-          tar -czf ../HMEngine-Linux-Build.tar.gz HMEngine-Linux-Build/
+          zip -r ../hmengine-windows-latest.zip hmengine-windows-latest/
+          zip -r ../hmengine-linux-latest.zip hmengine-linux-latest/
           cd ..
-          ls -lh *.tar.gz
+          ls -lh *.zip
 
       - name: Delete Old Pre-release
         uses: actions/github-script@v7
@@ -201,6 +202,6 @@ jobs:
           prerelease: true
           generate_release_notes: true
           files: |
-            HMEngine-Windows-Build.tar.gz
-            HMEngine-Linux-Build.tar.gz
+            hmengine-windows-latest.zip
+            hmengine-linux-latest.zip
           token: ${{ secrets.GITHUB_TOKEN }}
