@@ -8,12 +8,12 @@ import states.TitleState;
 
 // Add a variable here and it will get automatically saved
 @:structInit class SaveVariables {
-	public var downScroll:Bool = false;
+	public var downScroll:Bool = true;
 	public var middleScroll:Bool = false;
 	public var opponentStrums:Bool = true;
 	public var showFPS:Bool = true;
 	public var flashing:Bool = true;
-	public var autoPause:Bool = true;
+	public var autoPause:Bool = false;
 	public var antialiasing:Bool = true;
 	public var noteSkin:String = 'Default';
 	public var splashSkin:String = 'Psych';
@@ -43,7 +43,7 @@ import states.TitleState;
 	public var healthBarAlpha:Float = 1;
 	public var hitsoundVolume:Float = 0;
 	public var pauseMusic:String = 'Tea Time';
-	public var checkForUpdates:Bool = true;
+	public var checkForUpdates:Bool = false;
 	public var comboStacking:Bool = true;
 	public var gameplaySettings:Map<String, Dynamic> = [
 		'scrollspeed' => 1.0,
@@ -90,10 +90,10 @@ class ClientPrefs {
 	//Every key has two binds, add your key bind down here and then add your control on options/ControlsSubState.hx and Controls.hx
 	public static var keyBinds:Map<String, Array<FlxKey>> = [
 		//Key Bind, Name for ControlsSubState
-		'note_up'		=> [W, UP],
+		'note_up'		=> [k, UP],
 		'note_left'		=> [A, LEFT],
 		'note_down'		=> [S, DOWN],
-		'note_right'	=> [D, RIGHT],
+		'note_right'	=> [l, RIGHT],
 		
 		'ui_up'			=> [W, UP],
 		'ui_left'		=> [A, LEFT],
