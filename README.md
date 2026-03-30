@@ -5,3 +5,4 @@ A custom fnf psych engine fork i work yay
 - Custom state/sub state with scripts (.hx)
 - Reloading state by pressing F5 (can be changed)
 - Display console to display all the trace code by pressing F2 (can be changed)
+- Funkin modchart
