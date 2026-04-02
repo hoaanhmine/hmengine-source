@@ -88,11 +88,6 @@
     <haxelib name="flixel-screenshot-plugin" version="git" />
     <haxelib name="sl-windows-api" version="1.2.0" if="windows" />
     <haxelib name="hxcpp-debug-server" if="debug" />
-	<haxedef name="FM_ENGINE" value="PSYCH"/>
-	<haxedef name="FM_ENGINE_VERSION" value="1.0"/>
-    <haxelib name="funkin-modchart" version="1.2.5" />
-    <haxeflag name="--macro" value="modchart.backend.macros.Macro.includeFiles()" />
-
     <section if="MODCHARTS_ALLOWED">
         <haxedef name="FM_ENGINE" value="PSYCH"/>
 		<haxedef name="FM_ENGINE_VERSION" value="1.0"/>
