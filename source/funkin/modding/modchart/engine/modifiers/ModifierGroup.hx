@@ -199,7 +199,10 @@ final class ModifierGroup {
 
 			return;
 		}
+
+		modifiers.set(lowerName, null);
 		var newModifier = Type.createInstance(modifierClass, [playfield]);
+		modifiers.set(lowerName, newModifier);
 		__addModifier(lowerName, newModifier);
 	}
 
