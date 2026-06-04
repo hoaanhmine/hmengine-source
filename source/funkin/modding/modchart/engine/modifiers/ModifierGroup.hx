@@ -182,6 +182,12 @@ final class ModifierGroup {
 	public inline function addScriptedModifier(name:String, instance:Modifier)
 		__addModifier(name, instance);
 
+	inline function _autoAddModifier(name:String) {
+		var lowerName = name.toLowerCase();
+		if (!modifiers.exists(lowerName) && __modifierRegistrery.exists(lowerName))
+			addModifier(lowerName);
+	}
+
 	public inline function addModifier(name:String) {
 		var lowerName = name.toLowerCase();
 		if (modifiers.exists(lowerName))
@@ -199,6 +205,7 @@ final class ModifierGroup {
 
 	// Note: __hashKey in PercentArray is now case-insensitive, so no toLowerCase() needed.
 	public inline function setPercent(name:String, value:Float, player:Int = -1) {
+		_autoAddModifier(name);
 		final possiblePercs = percents.get(name);
 		final generate = possiblePercs == null;
 		final percs = generate ? __getPercentTemplate() : possiblePercs;
