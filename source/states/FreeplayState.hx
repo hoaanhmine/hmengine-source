@@ -4,7 +4,6 @@ import backend.WeekData;
 import backend.Highscore;
 import backend.Song;
 
-import objects.HealthIcon;
 import objects.MusicPlayer;
 
 import options.GameplayChangersSubstate;
@@ -36,8 +35,6 @@ class FreeplayState extends MusicBeatState
 
 	public var grpSongs:FlxTypedGroup<Alphabet>;
 	public var curPlaying:Bool = false;
-
-	public var iconArray:Array<HealthIcon> = [];
 
 	public var bg:FlxSprite;
 	public var intendedColor:Int;
@@ -112,44 +109,31 @@ class FreeplayState extends MusicBeatState
 
 		for (i in 0...songs.length)
 		{
-			var songText:Alphabet = new Alphabet(90, 320, songs[i].songName, true);
+			var songText:Alphabet = new Alphabet(0, 320, songs[i].songName, true);
 			songText.targetY = i;
+			songText.screenCenter(X);
 			grpSongs.add(songText);
 
 			songText.scaleX = Math.min(1, 980 / songText.width);
 			songText.snapToPosition();
 
-			Mods.currentModDirectory = songs[i].folder;
-			var icon:HealthIcon = new HealthIcon(songs[i].songCharacter);
-			icon.sprTracker = songText;
-
-			
-			// too laggy with a lot of songs, so i had to recode the logic for it
 			songText.visible = songText.active = songText.isMenuItem = false;
-			icon.visible = icon.active = false;
-
-			// using a FlxGroup is too much fuss!
-			iconArray.push(icon);
-			add(icon);
-
-			// songText.x += 40;
-			// DONT PUT X IN THE FIRST PARAMETER OF new ALPHABET() !!
-			// songText.screenCenter(X);
 		}
 		WeekData.setDirectoryFromWeek();
 
-		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
-		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
-
-		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
-		scoreBG.alpha = 0.6;
+		var panelWid:Float = 320;
+		var panelX:Float = FlxG.width - panelWid - 20;
+		scoreBG = new FlxSprite(panelX, 10).makeGraphic(Std.int(panelWid), 80, 0xFF000000);
+		scoreBG.alpha = 0.7;
 		add(scoreBG);
 
-		diffText = new FlxText(scoreText.x, scoreText.y + 36, 0, "", 24);
-		diffText.font = scoreText.font;
-		add(diffText);
-
+		scoreText = new FlxText(panelX + 12, scoreBG.y + 8, panelWid - 24, "", 26);
+		scoreText.setFormat(Paths.font("vcr.ttf"), 26, FlxColor.WHITE, LEFT);
 		add(scoreText);
+
+		diffText = new FlxText(panelX + 12, scoreBG.y + 48, panelWid - 24, "", 18);
+		diffText.setFormat(Paths.font("vcr.ttf"), 18, 0xFFFFCC00, LEFT);
+		add(diffText);
 
 
 		missingTextBG = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
@@ -170,15 +154,14 @@ class FreeplayState extends MusicBeatState
 
 		curDifficulty = Math.round(Math.max(0, Difficulty.defaultList.indexOf(lastDifficultyName)));
 
-		bottomBG = new FlxSprite(0, FlxG.height - 26).makeGraphic(FlxG.width, 26, 0xFF000000);
-		bottomBG.alpha = 0.6;
+		bottomBG = new FlxSprite(0, FlxG.height - 24).makeGraphic(FlxG.width, 24, 0xFF000000);
+		bottomBG.alpha = 0.5;
 		add(bottomBG);
 
-		var leText:String = Language.getPhrase("freeplay_tip", "Press SPACE to listen to the Song / Press CTRL to open the Gameplay Changers Menu / Press RESET to Reset your Score and Accuracy.");
+		var leText:String = Language.getPhrase("freeplay_tip", "SPACE: Listen  |  CTRL: Gameplay Changers  |  RESET: Reset Score");
 		bottomString = leText;
-		var size:Int = 16;
-		bottomText = new FlxText(bottomBG.x, bottomBG.y + 4, FlxG.width, leText, size);
-		bottomText.setFormat(Paths.font("vcr.ttf"), size, FlxColor.WHITE, CENTER);
+		bottomText = new FlxText(bottomBG.x, bottomBG.y + 4, FlxG.width, leText, 14);
+		bottomText.setFormat(Paths.font("vcr.ttf"), 14, 0xFFAAAAAA, CENTER);
 		bottomText.scrollFactor.set();
 		add(bottomText);
 		
@@ -528,14 +511,9 @@ class FreeplayState extends MusicBeatState
 
 		for (num => item in grpSongs.members)
 		{
-			var icon:HealthIcon = iconArray[num];
-			item.alpha = 0.6;
-			icon.alpha = 0.6;
+			item.alpha = 0.5;
 			if (item.targetY == curSelected)
-			{
 				item.alpha = 1;
-				icon.alpha = 1;
-			}
 		}
 		
 		Mods.currentModDirectory = songs[curSelected].folder;
@@ -562,11 +540,7 @@ class FreeplayState extends MusicBeatState
 
 	public function positionHighscore():Void
 	{
-		scoreText.x = FlxG.width - scoreText.width - 6;
-		scoreBG.scale.x = FlxG.width - scoreText.x + 6;
-		scoreBG.x = FlxG.width - (scoreBG.scale.x / 2);
-		diffText.x = Std.int(scoreBG.x + (scoreBG.width / 2));
-		diffText.x -= diffText.width / 2;
+		// panel is fixed, no dynamic positioning needed
 	}
 
 	public var _drawDistance:Int = 4;
@@ -577,7 +551,6 @@ class FreeplayState extends MusicBeatState
 		for (i in _lastVisibles)
 		{
 			grpSongs.members[i].visible = grpSongs.members[i].active = false;
-			iconArray[i].visible = iconArray[i].active = false;
 		}
 		_lastVisibles = [];
 
@@ -590,8 +563,6 @@ class FreeplayState extends MusicBeatState
 			item.x = ((item.targetY - lerpSelected) * item.distancePerItem.x) + item.startPosition.x;
 			item.y = ((item.targetY - lerpSelected) * 1.3 * item.distancePerItem.y) + item.startPosition.y;
 
-			var icon:HealthIcon = iconArray[i];
-			icon.visible = icon.active = true;
 			_lastVisibles.push(i);
 		}
 	}
