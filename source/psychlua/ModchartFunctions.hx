@@ -2,7 +2,6 @@ package psychlua;
 
 #if MODCHARTS_ALLOWED
 import modchart.Manager;
-import modchart.events.Event;
 #end
 
 class ModchartFunctions
@@ -65,7 +64,7 @@ class ModchartFunctions
 		{
 			if (Manager.instance != null)
 			{
-				Manager.instance.callback(beat, function(event:Event)
+				Manager.instance.callback(beat, function(event)
 				{
 					funk.call(luaFuncName, [event]);
 				}, field);
@@ -76,7 +75,7 @@ class ModchartFunctions
 		{
 			if (Manager.instance != null)
 			{
-				Manager.instance.repeater(beat, length, function(event:Event)
+				Manager.instance.repeater(beat, length, function(event)
 				{
 					funk.call(luaFuncName, [event]);
 				}, field);
