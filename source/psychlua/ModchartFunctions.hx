@@ -4,6 +4,7 @@ package psychlua;
 import funkin.modding.modchart.Manager;
 import funkin.modding.modchart.backend.standalone.Adapter;
 import backend.Conductor;
+import flixel.tweens.FlxEase;
 #end
 
 class ModchartFunctions
@@ -258,6 +259,63 @@ class ModchartFunctions
 			var y = Adapter.instance.getDefaultReceptorY(lane, player) + Manager.ARROW_SIZEDIV2;
 
 			return {x: x, y: y};
+		});
+
+		Lua_helper.add_callback(lua, "parseITGModstring", function(modStr:String, ?startStep:Float = -1, ?player:Int = -1, ?field:Int = -1)
+		{
+			if (Manager.instance == null) return;
+
+			if (startStep < 0)
+				startStep = Conductor.songPosition / Conductor.stepCrochet;
+
+			var bits = modStr.split(",");
+			for (bit in bits)
+			{
+				bit = bit.trim();
+				if (bit == "") continue;
+
+				var parts = bit.split(" ");
+				var level:Float = 1;
+				var speed:Float = 1;
+
+				for (part in parts)
+				{
+					part = part.trim();
+					if (part == "") continue;
+
+					if (part.toLowerCase() == "no")
+						level = 0;
+					else if (part.charAt(0) == "*")
+						speed = Std.parseFloat(part.substr(1));
+					else if (part.charAt(part.length - 1) == "%")
+						level = Std.parseFloat(part.substr(0, -1)) / 100;
+					else if (part.charAt(0) >= "0" && part.charAt(0) <= "9" || part.charAt(0) == "-" || part.charAt(0) == "+")
+						level = Std.parseFloat(part);
+				}
+
+				bit = parts[parts.length - 1].trim();
+
+				var ereg = ~/^(\w)(\d*\.?\d*)$/;
+				if (ereg.match(bit))
+				{
+					var type = ereg.matched(1);
+					level = (Math.isNaN(Std.parseFloat(ereg.matched(2))) ? 0 : Std.parseFloat(ereg.matched(2)));
+					bit = type + "mod";
+				}
+
+				if (speed <= 0)
+					Manager.instance.set(bit, startStep / 4, level, player, field);
+				else
+				{
+					var durationMs:Float = (level / speed) * 1000;
+					if (durationMs < 0) durationMs = -durationMs;
+					if (Math.isNaN(durationMs) || durationMs <= 0) durationMs = 1;
+					var durationSteps:Float = durationMs / Conductor.stepCrochet;
+					if (Math.isNaN(durationSteps) || durationSteps <= 0) durationSteps = 0.25;
+
+					Manager.instance.ease(bit, startStep / 4, durationSteps / 4, level, FlxEase.linear, player, field);
+				}
+			}
 		});
 		#end
 	}
