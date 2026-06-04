@@ -1,7 +1,7 @@
 package funkin.modding.modchart;
 
 class Config {
-	public static var CAMERA3D_ENABLED:Bool = true;
+	public static var CAMERA3D_ENABLED:Bool = false;
 	public static var ROTATION_ORDER:RotationOrder = Z_Y_X;
 	public static var OPTIMIZE_HOLDS:Bool = false;
 	public static var Z_SCALE:Float = 1;
