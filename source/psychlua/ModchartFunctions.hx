@@ -1,8 +1,8 @@
 package psychlua;
 
 #if MODCHARTS_ALLOWED
-import modchart.Manager;
-import modchart.backend.standalone.Adapter;
+import funkin.modding.modchart.Manager;
+import funkin.modding.modchart.backend.standalone.Adapter;
 import backend.Conductor;
 #end
 
@@ -29,6 +29,19 @@ class ModchartFunctions
 		{
 			if (Manager.instance != null)
 				return Manager.instance.getPercent(name, player, field);
+			return 0.0;
+		});
+
+		Lua_helper.add_callback(lua, "setRawValue", function(name:String, value:Float, ?player:Int = -1, ?field:Int = -1)
+		{
+			if (Manager.instance != null)
+				Manager.instance.setRawValue(name, value, player, field);
+		});
+
+		Lua_helper.add_callback(lua, "getRawValue", function(name:String, ?player:Int = 0, ?field:Int = 0):Float
+		{
+			if (Manager.instance != null)
+				return Manager.instance.getRawValue(name, player, field);
 			return 0.0;
 		});
 
@@ -240,8 +253,6 @@ class ModchartFunctions
 			if (playfield == null) return null;
 
 			var lane = Adapter.instance.getLaneFromArrow(strum);
-			var songPos = Conductor.songPosition;
-			var arrowTime = Adapter.instance.getTimeFromArrow(strum);
 
 			var x = Adapter.instance.getDefaultReceptorX(lane, player) + Manager.ARROW_SIZEDIV2;
 			var y = Adapter.instance.getDefaultReceptorY(lane, player) + Manager.ARROW_SIZEDIV2;

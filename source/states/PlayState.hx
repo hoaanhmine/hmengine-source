@@ -54,7 +54,7 @@ import crowplexus.hscript.Expr.Error as IrisError;
 import crowplexus.hscript.Printer;
 #end
 #if MODCHARTS_ALLOWED
-import modchart.Manager;
+import funkin.modding.modchart.Manager;
 #end
 
 /**

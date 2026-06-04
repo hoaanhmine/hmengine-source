@@ -92,8 +92,12 @@
         <haxedef name="FM_ENGINE" value="PSYCH"/>
 		<haxedef name="FM_ENGINE_VERSION" value="1.0"/>
         
-        <haxelib name="funkin-modchart" version="1.2.5" />
-        <haxeflag name="--macro" value="modchart.backend.macros.Macro.includeFiles()" />
+        <assets path="assets/modchart" embed="true" />
+        
+        <haxeflag name="--macro" value="funkin.modding.modchart.backend.macros.Macro.includeFiles()" />
+        <haxeflag name="--macro" value="addMetadata('@:build(funkin.modding.modchart.backend.macros.Macro.buildFlxCamera())', 'flixel.FlxCamera')" />
+        <haxeflag name="--macro" value="addMetadata('@:build(funkin.modding.modchart.backend.macros.Macro.buildFlxDrawTrianglesItem())', 'flixel.graphics.tile.FlxDrawTrianglesItem')" />
+        <haxeflag name="--macro" value="addMetadata('@:build(funkin.modding.modchart.backend.macros.Macro.addModchartStorage())', 'flixel.FlxBasic')" />
     </section>
 
     <!-- ======================== HAXE DEFINES ======================== -->
