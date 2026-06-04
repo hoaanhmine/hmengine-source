@@ -76,73 +76,8 @@ jobs:
           name: hmengine-windows-latest
           path: export/release/windows/bin
 
-  build-linux:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
-    steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
-
-      - name: Setup Haxe
-        uses: krdlab/setup-haxe@v1
-        with:
-          haxe-version: 4.3.6
-
-      - name: Restore Haxelib Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.haxelib
-          key: ${{ runner.os }}-haxelib-${{ hashFiles('**/dependencies.hxpkg') }}-${{ github.run_id }}
-          restore-keys: |
-            ${{ runner.os }}-haxelib-
-
-      - name: Install Dependencies
-        run: |
-          haxelib --global install hxpkg
-          haxelib run hxpkg install --global
-          haxelib install hxcpp
-
-      - name: Setup Lime for Linux
-        run: echo "y" | haxelib run lime setup linux
-
-      - name: Setup VLC for Linux
-        run: sudo apt-get update && sudo apt-get install -y vlc libvlc-dev libvlccore-dev vlc-bin
-
-      - name: Restore Build Cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            export/release/linux/haxe
-            export/release/linux/obj
-            .hx/
-          key: ${{ runner.os }}-build-latest
-          restore-keys: |
-            ${{ runner.os }}-build-
-
-      - name: Build Linux
-        run: haxelib run lime build linux
-
-      - name: Save Build Cache
-        uses: actions/cache/save@v3
-        if: always()
-        with:
-          path: |
-            export/release/linux/haxe
-            export/release/linux/obj
-            .hx/
-          key: ${{ runner.os }}-build-latest
-
-      - name: Upload Linux Artifact
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: hmengine-linux-latest
-          path: export/release/linux/bin
-          if-no-files-found: warn
-
   release:
-    needs: [build-windows, build-linux]
+    needs: [build-windows]
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     permissions:
@@ -162,7 +97,6 @@ jobs:
         run: |
           cd artifacts
           zip -r ../hmengine-windows-latest.zip hmengine-windows-latest/
-          zip -r ../hmengine-linux-latest.zip hmengine-linux-latest/
           cd ..
           ls -lh *.zip
 
@@ -203,5 +137,4 @@ jobs:
           generate_release_notes: true
           files: |
             hmengine-windows-latest.zip
-            hmengine-linux-latest.zip
           token: ${{ secrets.GITHUB_TOKEN }}
