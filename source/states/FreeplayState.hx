@@ -111,10 +111,12 @@ class FreeplayState extends MusicBeatState
 		{
 			var songText:Alphabet = new Alphabet(0, 320, songs[i].songName, true);
 			songText.targetY = i;
-			songText.screenCenter(X);
 			grpSongs.add(songText);
 
 			songText.scaleX = Math.min(1, 980 / songText.width);
+			songText.screenCenter(X);
+			songText.startPosition.x = songText.x;
+			songText.startPosition.y = songText.y;
 			songText.snapToPosition();
 
 			songText.visible = songText.active = songText.isMenuItem = false;
@@ -127,12 +129,12 @@ class FreeplayState extends MusicBeatState
 		scoreBG.alpha = 0.7;
 		add(scoreBG);
 
-		scoreText = new FlxText(panelX + 12, scoreBG.y + 8, panelWid - 24, "", 26);
-		scoreText.setFormat(Paths.font("vcr.ttf"), 26, FlxColor.WHITE, LEFT);
+		scoreText = new FlxText(panelX + 12, scoreBG.y + 8, panelWid - 24, "", 24);
+		scoreText.setFormat(Paths.font("vcr.ttf"), 24, FlxColor.WHITE, LEFT);
 		add(scoreText);
 
 		diffText = new FlxText(panelX + 12, scoreBG.y + 48, panelWid - 24, "", 18);
-		diffText.setFormat(Paths.font("vcr.ttf"), 18, 0xFFFFCC00, LEFT);
+		diffText.setFormat(Paths.font("vcr.ttf"), 18, 0xFFFFCC00, CENTER);
 		add(diffText);
 
 
