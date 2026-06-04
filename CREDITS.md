@@ -35,14 +35,6 @@ Hệ thống modchart gốc:
 
 Nguồn: [https://github.com/dotaxel/FunkinModchart](https://github.com/dotaxel/FunkinModchart)
 
-## PlusEngine Modchart
-
-Bản mở rộng của FunkinModchart, được port vào HMEngine:
-
-- **PlusEngine Team** — Phát triển hệ thống modchart nâng cao
-
-Nguồn: [https://github.com/Psych-Plus-Team/FNF-PlusEngine](https://github.com/Psych-Plus-Team/FNF-PlusEngine)
-
 ---
 
 ## HMEngine
