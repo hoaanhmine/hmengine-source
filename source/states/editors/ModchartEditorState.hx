@@ -45,6 +45,7 @@ class ModchartEditorState extends MusicBeatState
 	var songName:String = 'test';
 	var songPath:String = '';
 	var bpm:Float = 100;
+	var songNotes:Array<Array<Dynamic>> = [];
 
 	// UI elements
 	var topBar:FlxSprite;
@@ -56,6 +57,12 @@ class ModchartEditorState extends MusicBeatState
 	var eventCountText:FlxText;
 	var codeText:FlxText;
 	var codeBg:FlxSprite;
+
+	// Note preview
+	var previewStrum:FlxTypedGroup<FlxSprite>;
+	var previewNotes:FlxTypedGroup<FlxSprite>;
+	var previewNoteData:Array<{beat:Float, lane:Int, sprite:FlxSprite}>;
+	var strumX:Float;
 
 	// Timeline
 	var timelineBg:FlxSprite;
@@ -160,11 +167,13 @@ class ModchartEditorState extends MusicBeatState
 				songName = formatted;
 				songLength = 0;
 				songPath = Paths.modsJson('songs/$formatted/');
+				loadSongNotes();
 				return;
 			}
 		}
 		bpm = 120;
 		songName = name;
+		loadSongNotes();
 	}
 
 	function createUI()
@@ -199,6 +208,7 @@ class ModchartEditorState extends MusicBeatState
 		add(timelineEvents);
 		timelineCursor = new FlxSprite(0, 40).makeGraphic(2, 50, FlxColor.CYAN);
 		timelineCursor.scrollFactor.set();
+		timelineCursor.alpha = 0.9;
 		add(timelineCursor);
 
 		// Event list
@@ -255,6 +265,9 @@ class ModchartEditorState extends MusicBeatState
 
 		// Bottom buttons
 		createBottomButtons(codeY);
+
+		// Note preview
+		createNotePreview(codeY);
 	}
 
 	function createForm(x:Int, y:Int)
@@ -443,6 +456,109 @@ class ModchartEditorState extends MusicBeatState
 		eventCountText.setFormat(Paths.font("vcr.ttf"), 12, FlxColor.YELLOW, RIGHT);
 		eventCountText.scrollFactor.set();
 		add(eventCountText);
+	}
+
+	function createNotePreview(codeY:Int)
+	{
+		strumX = 10;
+		var previewY = codeY + 25;
+		var laneW = 28;
+		var laneH = 110;
+		var gap = 4;
+
+		previewStrum = new FlxTypedGroup<FlxSprite>();
+		previewNotes = new FlxTypedGroup<FlxSprite>();
+		previewNoteData = [];
+
+		add(previewStrum);
+		add(previewNotes);
+
+		for (i in 0...4)
+		{
+			var sx = strumX + i * (laneW + gap);
+			var strum = new FlxSprite(sx, previewY + laneH - 12).makeGraphic(laneW, 4, getLaneColor(i));
+			strum.scrollFactor.set();
+			previewStrum.add(strum);
+
+			var bg = new FlxSprite(sx, previewY).makeGraphic(laneW, laneH, 0x22FFFFFF);
+			bg.scrollFactor.set();
+			insert(FlxG.state.members.indexOf(previewStrum), bg);
+		}
+
+		loadSongNotes();
+	}
+
+	function getLaneColor(lane:Int):FlxColor
+	{
+		return switch (lane) {
+			case 0: 0xFFFF0000;
+			case 1: 0xFF0000FF;
+			case 2: 0xFF00FF00;
+			case 3: 0xFFFFFF00;
+			default: 0xFFFFFFFF;
+		}
+	}
+
+	function loadSongNotes()
+	{
+		previewNoteData = [];
+		previewNotes.clear();
+
+		var formatted = Paths.formatToSongPath(songName);
+		var path = Paths.json('songs/$formatted/$formatted');
+		if (!Assets.exists(path, TEXT)) return;
+
+		var rawJson = Assets.getText(path);
+		var songData = Song.parseJSON(rawJson, formatted, 'psych_v1');
+		if (songData == null || songData.notes == null) return;
+
+		for (section in songData.notes)
+		{
+			var sectionBeats:Float = section.sectionBeats;
+			if (sectionBeats <= 0) sectionBeats = 4;
+
+			for (note in section.sectionNotes)
+			{
+				var strumTime:Float = note[0];
+				var noteData:Int = Std.int(note[1]) % 4;
+				var beat = strumTime / 1000 * (bpm / 60);
+
+				var laneW = 28;
+				var gap = 4;
+				var sx = strumX + noteData * (laneW + gap);
+
+				var noteSpr = new FlxSprite(sx, 0).makeGraphic(laneW - 2, 8, getLaneColor(noteData));
+				noteSpr.scrollFactor.set();
+				noteSpr.visible = false;
+				previewNotes.add(noteSpr);
+
+				previewNoteData.push({beat: beat, lane: noteData, sprite: noteSpr});
+			}
+		}
+	}
+
+	function updateNotePreview()
+	{
+		if (previewNotes == null || previewNoteData == null) return;
+
+		var previewY = bottomBar.y + 25;
+		var laneH = 110;
+		var beatRange = 4;
+
+		for (nd in previewNoteData)
+		{
+			var diff = nd.beat - currentBeat;
+			if (playing && diff > -beatRange * 0.5 && diff < beatRange * 0.5)
+			{
+				var progress = diff / beatRange + 0.5;
+				var y = previewY + laneH - 12 - progress * laneH;
+				nd.sprite.y = y;
+				nd.sprite.visible = true;
+				nd.sprite.alpha = 1 - Math.abs(diff) / beatRange;
+			}
+			else
+				nd.sprite.visible = false;
+		}
 	}
 
 	// Event operations
@@ -811,6 +927,7 @@ class ModchartEditorState extends MusicBeatState
 			beatText.text = 'Beat: ${Std.int(currentBeat)}';
 			timelineCursor.x = 10 + currentBeat * timelineBeatWidth - timelineOffset;
 		}
+		updateNotePreview();
 
 		// Keyboard shortcuts
 		if (FlxG.keys.justPressed.SPACE)

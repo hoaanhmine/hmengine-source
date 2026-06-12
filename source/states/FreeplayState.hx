@@ -104,6 +104,15 @@ class FreeplayState extends MusicBeatState
 		add(bg);
 		bg.screenCenter();
 
+		if (ClientPrefs.data.audioVisualizer)
+		{
+			var vis = new objects.AudioVisualizer(0, 0, Std.int(FlxG.width), Std.int(FlxG.height), 96);
+			vis.alpha = 0.12;
+			vis.blend = ADD;
+			vis.antialiasing = ClientPrefs.data.antialiasing;
+			insert(0, vis);
+		}
+
 		grpSongs = new FlxTypedGroup<Alphabet>();
 		add(grpSongs);
 
