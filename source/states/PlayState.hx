@@ -462,7 +462,7 @@ class PlayState extends MusicBeatState
 
 		if (ClientPrefs.data.audioVisualizer)
 		{
-			var vis = new objects.AudioVisualizer(0, 0, FlxG.width, FlxG.height, 64);
+			var vis = new objects.AudioVisualizer(0, 0, Std.int(FlxG.width), Std.int(FlxG.height), 64);
 			vis.alpha = 0.08;
 			vis.blend = ADD;
 			vis.antialiasing = ClientPrefs.data.antialiasing;

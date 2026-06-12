@@ -46,6 +46,13 @@ jobs:
           haxelib --global install hxpkg
           haxelib run hxpkg install --global
           haxelib install hxcpp
+          haxelib install grig.audio 0.0.5
+          haxelib install flixel 5.9.0
+          haxelib install flixel-addons 3.3.0
+          haxelib install tjson 1.4.0
+          haxelib install hxdiscord_rpc 1.2.4
+          haxelib install hscript-iris 1.1.3
+          haxelib install hxvlc 2.1.0
 
       - name: Restore Build Cache
         uses: actions/cache@v3

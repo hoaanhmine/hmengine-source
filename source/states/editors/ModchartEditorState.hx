@@ -91,9 +91,6 @@ class ModchartEditorState extends MusicBeatState
 	var formEase:Int = 0;
 	var formPlayer:Int = -1;
 
-	// Preview
-	var previewVisualizer:AudioVisualizer;
-
 	// Available modifiers
 	static var modifierList:Array<String> = [
 		"confusion", "drunk", "tipsy", "tornado", "bumpy", "bounce", "beat",

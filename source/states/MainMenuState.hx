@@ -77,7 +77,7 @@ class MainMenuState extends MusicBeatState
 
 		if (ClientPrefs.data.audioVisualizer)
 		{
-			var vis = new objects.AudioVisualizer(0, 0, FlxG.width, FlxG.height, 96);
+			var vis = new objects.AudioVisualizer(0, 0, Std.int(FlxG.width), Std.int(FlxG.height), 96);
 			vis.alpha = 0.15;
 			vis.blend = ADD;
 			vis.antialiasing = ClientPrefs.data.antialiasing;

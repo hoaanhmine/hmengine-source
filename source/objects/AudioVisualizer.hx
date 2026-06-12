@@ -1,7 +1,5 @@
 package objects;
 
-import funkin.vis.dsp.SpectralAnalyzer;
-import funkin.vis.dsp.Bar;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
@@ -12,15 +10,14 @@ class AudioVisualizer extends FlxSprite
 {
 	public var barCount:Int = 64;
 	public var barSpacing:Float = 2;
-	public var sensitivity:Float = 1.0;
-	public var smoothingFactor:Float = 0.3;
-	public var peakFallSpeed:Float = 3.0;
+	public var sensitivity:Float = 1.5;
+	public var smoothingFactor:Float = 0.25;
+	public var peakFallSpeed:Float = 2.0;
 
-	var analyzer:SpectralAnalyzer;
-	var levels:Array<Bar>;
 	var barHeights:Array<Float>;
 	var targetHeights:Array<Float>;
 	var peakHeights:Array<Float>;
+	var barPhases:Array<Float>;
 
 	var _rect:Rectangle;
 
@@ -32,39 +29,15 @@ class AudioVisualizer extends FlxSprite
 		scrollFactor.set();
 
 		_rect = new Rectangle();
-		levels = [];
 		barHeights = [for (i in 0...barCount) 0.0];
 		targetHeights = [for (i in 0...barCount) 0.0];
 		peakHeights = [for (i in 0...barCount) 0.0];
-
-		initAnalyzer();
+		barPhases = [for (i in 0...barCount) (i / barCount) * Math.PI * 2];
 	}
 
 	public function reinit()
 	{
-		analyzer = null;
-		initAnalyzer();
-	}
-
-	function initAnalyzer()
-	{
-		try
-		{
-			@:privateAccess
-			var source = FlxG.sound.music._channel.source;
-			if (source != null)
-			{
-				analyzer = new SpectralAnalyzer(source, barCount, 0.8, 30);
-				analyzer.minDb = -70;
-				analyzer.maxDb = -20;
-				analyzer.minFreq = 50;
-				analyzer.maxFreq = 18000;
-			}
-		}
-		catch (e:Dynamic)
-		{
-			analyzer = null;
-		}
+		// Nothing to re-init in amplitude mode
 	}
 
 	function getBarWidth():Float
@@ -77,46 +50,33 @@ class AudioVisualizer extends FlxSprite
 		if (!visible || !exists) return;
 		super.update(elapsed);
 
-		if (analyzer == null)
+		var amplitude:Float = 0;
+		if (FlxG.sound.music != null)
 		{
-			initAnalyzer();
-			if (analyzer == null) return;
+			amplitude = FlxG.sound.music.amplitude * sensitivity;
+			if (amplitude < 0.01) amplitude = 0;
 		}
 
-		if (FlxG.sound.music != null && FlxG.sound.music.playing)
-		{
-			try
-			{
-				levels = analyzer.getLevels(levels);
-			}
-			catch (e:Dynamic)
-			{
-				return;
-			}
+		var h = height;
+		var time = (FlxG.sound.music != null) ? FlxG.sound.music.time / 1000 : 0;
 
-			var h = height;
-			for (i in 0...barCount)
-			{
-				if (i < levels.length)
-				{
-					targetHeights[i] = levels[i].value * h * sensitivity;
-					barHeights[i] = FlxMath.lerp(barHeights[i], targetHeights[i], smoothingFactor);
-
-					var peakTarget = levels[i].peak * h * sensitivity;
-					if (peakHeights[i] < peakTarget)
-						peakHeights[i] = peakTarget;
-					else
-						peakHeights[i] -= peakFallSpeed * elapsed * h;
-				}
-			}
-		}
-		else
+		for (i in 0...barCount)
 		{
-			for (i in 0...barCount)
-			{
-				barHeights[i] *= 0.9;
-				peakHeights[i] = 0;
-			}
+			var phase = barPhases[i];
+			var freqMod = 0.5 + 0.5 * (i / barCount);
+			var wave = 0.5 + 0.5 * Math.sin(time * (4 + i * 2) + phase);
+			var spread = (barCount - i) / barCount * 0.4 + 0.1;
+
+			targetHeights[i] = amplitude * h * (spread + wave * freqMod * 0.6);
+			targetHeights[i] = FlxMath.bound(targetHeights[i], 0, h);
+
+			barHeights[i] = FlxMath.lerp(barHeights[i], targetHeights[i], smoothingFactor + amplitude * 0.3);
+
+			var peakTarget = targetHeights[i];
+			if (peakHeights[i] < peakTarget)
+				peakHeights[i] = peakTarget;
+			else
+				peakHeights[i] -= peakFallSpeed * elapsed * h;
 		}
 
 		drawBars();
