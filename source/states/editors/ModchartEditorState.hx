@@ -42,6 +42,7 @@ typedef ModchartEventData =
 class ModchartEditorState extends MusicBeatState
 {
 	// Song data
+	public static var openFromSong:String = '';
 	var songName:String = 'test';
 	var songPath:String = '';
 	var bpm:Float = 100;
@@ -72,6 +73,7 @@ class ModchartEditorState extends MusicBeatState
 	var timelineLabels:FlxTypedGroup<FlxText>;
 	var timelineEvents:FlxTypedGroup<FlxSprite>;
 	var timelineCursor:FlxSprite;
+	var playheadArrow:FlxSprite;
 
 	// Play controls
 	var playing:Bool = false;
@@ -146,6 +148,11 @@ class ModchartEditorState extends MusicBeatState
 
 		FlxG.camera.bgColor = 0xFF1a1a2e;
 
+		if (openFromSong.length > 0)
+		{
+			songName = openFromSong;
+			openFromSong = '';
+		}
 		loadSong(songName);
 		createUI();
 		loadSongNotes();
@@ -205,10 +212,15 @@ class ModchartEditorState extends MusicBeatState
 		add(timelineLabels);
 		timelineEvents = new FlxTypedGroup<FlxSprite>();
 		add(timelineEvents);
-		timelineCursor = new FlxSprite(10, 40).makeGraphic(2, 50, 0xFFFF4444);
+		timelineCursor = new FlxSprite(10, 40).makeGraphic(4, 50, 0xFFFF4444);
 		timelineCursor.scrollFactor.set();
 		timelineCursor.alpha = 1;
 		add(timelineCursor);
+
+		playheadArrow = new FlxSprite(10, 36).makeGraphic(10, 8, 0xFFFF4444);
+		playheadArrow.scrollFactor.set();
+		playheadArrow.alpha = 1;
+		add(playheadArrow);
 
 		// Event list
 		var listY = 90;
@@ -926,6 +938,9 @@ class ModchartEditorState extends MusicBeatState
 		}
 		cursorX = 10 + currentBeat * timelineBeatWidth - timelineOffset;
 		timelineCursor.x = cursorX;
+		timelineCursor.y = 40;
+		playheadArrow.x = cursorX - 3;
+		playheadArrow.y = 36;
 		beatText.text = 'Beat: ${Math.floor(currentBeat * 10) / 10}';
 		updateNotePreview();
 

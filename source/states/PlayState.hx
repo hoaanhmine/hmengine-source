@@ -1678,7 +1678,10 @@ class PlayState extends MusicBeatState
 			else if (controls.justPressed('debug_2'))
 				openCharacterEditor();
 			else if (controls.justPressed('debug_3'))
+			{
+				states.editors.ModchartEditorState.openFromSong = PlayState.SONG.song;
 				MusicBeatState.switchState(new states.editors.ModchartEditorState());
+			}
 		}
 
 		if (healthBar.bounds.max != null && health > healthBar.bounds.max)
