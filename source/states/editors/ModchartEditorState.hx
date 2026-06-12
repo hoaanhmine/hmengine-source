@@ -146,8 +146,8 @@ class ModchartEditorState extends MusicBeatState
 		FlxG.camera.bgColor = 0xFF1a1a2e;
 
 		loadSong(songName);
-
 		createUI();
+		loadSongNotes();
 		refreshEventList();
 		updateCodePreview();
 	}
@@ -167,13 +167,11 @@ class ModchartEditorState extends MusicBeatState
 				songName = formatted;
 				songLength = 0;
 				songPath = Paths.modsJson('songs/$formatted/');
-				loadSongNotes();
 				return;
 			}
 		}
 		bpm = 120;
 		songName = name;
-		loadSongNotes();
 	}
 
 	function createUI()

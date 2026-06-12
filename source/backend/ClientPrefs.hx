@@ -112,6 +112,7 @@ class ClientPrefs {
 		
 		'debug_1'		=> [SEVEN],
 		'debug_2'		=> [EIGHT],
+		'debug_3'		=> [NINE],
 
 		'reload_state'	=> [F5],
 		'open_console' => [F2],
