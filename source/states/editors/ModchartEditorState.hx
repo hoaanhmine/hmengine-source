@@ -749,14 +749,14 @@ class ModchartEditorState extends MusicBeatState
 				if (type == 'set' || type == 'setAdd')
 				{
 					if (parts.length > 2) { evt.value = Std.parseFloat(parts[2]); if (Math.isNaN(evt.value)) evt.value = 1; }
-					if (parts.length > 3) { evt.player = Std.parseInt(parts[3]); if (evt.player == null) evt.player = -1; }
+					if (parts.length > 3) { var p:Null<Int> = Std.parseInt(parts[3]); evt.player = (p != null) ? p : -1; }
 				}
 				else if (type == 'ease' || type == 'add')
 				{
 					if (parts.length > 2) { evt.length = Std.parseFloat(parts[2]); if (Math.isNaN(evt.length)) evt.length = 4; }
 					if (parts.length > 3) { evt.value = Std.parseFloat(parts[3]); if (Math.isNaN(evt.value)) evt.value = 1; }
 					if (parts.length > 4) evt.ease = parts[4];
-					if (parts.length > 5) { evt.player = Std.parseInt(parts[5]); if (evt.player == null) evt.player = -1; }
+					if (parts.length > 5) { var p:Null<Int> = Std.parseInt(parts[5]); evt.player = (p != null) ? p : -1; }
 				}
 
 				events.push(evt);
