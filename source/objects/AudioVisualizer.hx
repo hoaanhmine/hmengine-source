@@ -19,7 +19,7 @@ class AudioVisualizer extends FlxSprite
 	var peakHeights:Array<Float>;
 	var barPhases:Array<Float>;
 
-	var _rect:Rectangle;
+	var _visRect:Rectangle;
 
 	public function new(x:Float, y:Float, w:Float, h:Float, barCount:Int = 64)
 	{
@@ -28,7 +28,7 @@ class AudioVisualizer extends FlxSprite
 		makeGraphic(Std.int(w), Std.int(h), FlxColor.TRANSPARENT, true);
 		scrollFactor.set();
 
-		_rect = new Rectangle();
+		_visRect = new Rectangle();
 		barHeights = [for (i in 0...barCount) 0.0];
 		targetHeights = [for (i in 0...barCount) 0.0];
 		peakHeights = [for (i in 0...barCount) 0.0];
@@ -92,8 +92,8 @@ class AudioVisualizer extends FlxSprite
 		var barW = Std.int(getBarWidth());
 		var spacing = Std.int(barSpacing);
 
-		_rect.setTo(0, 0, width, height);
-		pixel.fillRect(_rect, FlxColor.TRANSPARENT);
+		_visRect.setTo(0, 0, width, height);
+		pixel.fillRect(_visRect, FlxColor.TRANSPARENT);
 
 		for (i in 0...barCount)
 		{
@@ -103,20 +103,32 @@ class AudioVisualizer extends FlxSprite
 			var barX = i * (barW + spacing);
 			var barY = h - barH;
 
-			_rect.setTo(barX, barY, barW, barH);
-			pixel.fillRect(_rect, getBarColor(i, barH / h));
+			_visRect.setTo(barX, barY, barW, barH);
+			pixel.fillRect(_visRect, getBarColor(i, barH / h));
 
 			var peakY = h - Std.int(FlxMath.bound(peakHeights[i], 0, h));
-			_rect.setTo(barX, peakY - 2, barW, 2);
-			pixel.fillRect(_rect, FlxColor.WHITE);
+			_visRect.setTo(barX, peakY - 2, barW, 2);
+			pixel.fillRect(_visRect, FlxColor.WHITE);
 		}
 	}
 
 	function getBarColor(index:Int, value:Float):FlxColor
 	{
+		var r:Int, g:Int, b:Int;
 		if (value < 0.5)
-			return FlxColor.lerp(0xFF00FF00, 0xFFFFFF00, value * 2);
+		{
+			var t = value * 2;
+			r = Std.int(FlxMath.lerp(0, 255, t));
+			g = Std.int(FlxMath.lerp(255, 255, t));
+			b = Std.int(FlxMath.lerp(0, 0, t));
+		}
 		else
-			return FlxColor.lerp(0xFFFFFF00, 0xFFFF0000, (value - 0.5) * 2);
+		{
+			var t = (value - 0.5) * 2;
+			r = Std.int(FlxMath.lerp(255, 255, t));
+			g = Std.int(FlxMath.lerp(255, 0, t));
+			b = Std.int(FlxMath.lerp(0, 0, t));
+		}
+		return 0xFF000000 | (r << 16) | (g << 8) | b;
 	}
 }

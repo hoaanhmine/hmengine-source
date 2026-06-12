@@ -153,7 +153,7 @@ class ModchartEditorState extends MusicBeatState
 		if (Assets.exists(path, TEXT))
 		{
 			var rawJson = Assets.getText(path);
-			var songData:Song.SongData = Song.parseJSONshit(rawJson, formatted);
+			var songData = Song.parseJSON(rawJson, formatted, 'psych_v1');
 			if (songData != null)
 			{
 				bpm = songData.bpm;
@@ -223,10 +223,10 @@ class ModchartEditorState extends MusicBeatState
 
 		for (i in 0...maxVisibleEvents)
 		{
-			eventText = new FlxText(5, listY + 18 + i * 16, Std.int(eventListBg.width), '', 12);
-			eventText.setFormat(Paths.font("vcr.ttf"), 12, FlxColor.WHITE);
-			eventText.scrollFactor.set();
-			eventListTexts.add(eventText);
+			var et = new FlxText(5, listY + 18 + i * 16, Std.int(eventListBg.width), '', 12);
+			et.setFormat(Paths.font("vcr.ttf"), 12, FlxColor.WHITE);
+			et.scrollFactor.set();
+			eventListTexts.add(et);
 		}
 
 		// Divider
@@ -793,12 +793,8 @@ class ModchartEditorState extends MusicBeatState
 	function startPreviewSong()
 	{
 		var formatted = Paths.formatToSongPath(songName);
-		var instPath = Paths.inst(formatted);
-		if (Assets.exists(instPath, MUSIC))
-		{
-			FlxG.sound.playMusic(instPath, 1, false);
-			songLength = FlxG.sound.music.length;
-		}
+		FlxG.sound.playMusic(Paths.inst(formatted), 1, false);
+		songLength = FlxG.sound.music.length;
 	}
 
 	function onBack()
