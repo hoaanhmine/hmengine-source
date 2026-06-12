@@ -76,6 +76,7 @@ class ModchartEditorState extends MusicBeatState
 	// Play controls
 	var playing:Bool = false;
 	var currentBeat:Float = 0;
+	var cursorX:Float = 10;
 	var playbackSpeed:Float = 1.0;
 	var songLength:Float = 0;
 
@@ -204,9 +205,9 @@ class ModchartEditorState extends MusicBeatState
 		add(timelineLabels);
 		timelineEvents = new FlxTypedGroup<FlxSprite>();
 		add(timelineEvents);
-		timelineCursor = new FlxSprite(0, 40).makeGraphic(2, 50, FlxColor.CYAN);
+		timelineCursor = new FlxSprite(10, 40).makeGraphic(2, 50, 0xFFFF4444);
 		timelineCursor.scrollFactor.set();
-		timelineCursor.alpha = 0.9;
+		timelineCursor.alpha = 1;
 		add(timelineCursor);
 
 		// Event list
@@ -922,9 +923,10 @@ class ModchartEditorState extends MusicBeatState
 		if (playing && FlxG.sound.music != null && FlxG.sound.music.playing)
 		{
 			currentBeat = (FlxG.sound.music.time / 1000) * (bpm / 60);
-			beatText.text = 'Beat: ${Std.int(currentBeat)}';
-			timelineCursor.x = 10 + currentBeat * timelineBeatWidth - timelineOffset;
 		}
+		cursorX = 10 + currentBeat * timelineBeatWidth - timelineOffset;
+		timelineCursor.x = cursorX;
+		beatText.text = 'Beat: ${Math.floor(currentBeat * 10) / 10}';
 		updateNotePreview();
 
 		// Keyboard shortcuts
@@ -948,6 +950,18 @@ class ModchartEditorState extends MusicBeatState
 		// Timeline scroll
 		if (FlxG.keys.pressed.LEFT) { timelineOffset = Math.max(0, timelineOffset - elapsed * 200); updateTimeline(); }
 		if (FlxG.keys.pressed.RIGHT) { timelineOffset += elapsed * 200; updateTimeline(); }
+
+		// Click on timeline to set cursor position
+		if (FlxG.mouse.justPressed && FlxG.mouse.y >= timelineBg.y && FlxG.mouse.y < timelineBg.y + timelineBg.height)
+		{
+			var clickBeat = (FlxG.mouse.x + timelineOffset - 10) / timelineBeatWidth;
+			if (clickBeat >= 0)
+			{
+				currentBeat = clickBeat;
+				if (playing && FlxG.sound.music != null)
+					FlxG.sound.music.time = (currentBeat * 60 / bpm) * 1000;
+			}
+		}
 
 		// Number keys to select events (1-9, 0)
 		var numKey:Int = -1;
