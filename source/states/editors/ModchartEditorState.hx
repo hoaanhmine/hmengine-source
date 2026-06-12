@@ -89,6 +89,7 @@ class ModchartEditorState extends MusicBeatState
 	var eventListBg:FlxSprite;
 	var scrollOffset:Int = 0;
 	var maxVisibleEvents:Int = 14;
+	var dragging:Bool = false;
 
 	var eventListView:FlxSpriteGroup;
 
@@ -718,17 +719,27 @@ class ModchartEditorState extends MusicBeatState
 			var x = startX + evt.beat * timelineBeatWidth - timelineOffset;
 			if (x < -10 || x > FlxG.width + 10) continue;
 
+			var isSelected = (i == selectedEvent);
 			var color = getEventColor(evt.type);
-			var marker = new FlxSprite(x, y + 5).makeGraphic(8, Std.int(h) - 10, color);
+			var marker = new FlxSprite(x, y + 5).makeGraphic(isSelected ? 12 : 8, Std.int(h) - 10, color);
 			marker.scrollFactor.set();
+			if (isSelected) marker.alpha = 1;
 			timelineEvents.add(marker);
+
+			if (isSelected)
+			{
+				var border = new FlxSprite(x - 2, y + 3).makeGraphic(16, Std.int(h) - 6, 0xFFFFFFFF);
+				border.alpha = 0.4;
+				border.scrollFactor.set();
+				timelineEvents.add(border);
+			}
 
 			if (evt.length > 0 && (evt.type == 'ease' || evt.type == 'add'))
 			{
 				var endX = startX + (evt.beat + evt.length) * timelineBeatWidth - timelineOffset;
 				var w = Std.int(Math.max(endX - x, 4));
 				var bar = new FlxSprite(x, y + Std.int(h / 2) - 2).makeGraphic(w, 4, color);
-				bar.alpha = 0.5;
+				bar.alpha = isSelected ? 0.8 : 0.5;
 				bar.scrollFactor.set();
 				timelineEvents.add(bar);
 			}
@@ -966,17 +977,61 @@ class ModchartEditorState extends MusicBeatState
 		if (FlxG.keys.pressed.LEFT) { timelineOffset = Math.max(0, timelineOffset - elapsed * 200); updateTimeline(); }
 		if (FlxG.keys.pressed.RIGHT) { timelineOffset += elapsed * 200; updateTimeline(); }
 
-		// Click on timeline to set cursor position
+		// Click on timeline to select/add events
 		if (FlxG.mouse.justPressed && FlxG.mouse.y >= timelineBg.y && FlxG.mouse.y < timelineBg.y + timelineBg.height)
 		{
 			var clickBeat = (FlxG.mouse.x + timelineOffset - 10) / timelineBeatWidth;
-			if (clickBeat >= 0)
+			currentBeat = Math.max(0, clickBeat);
+			if (playing && FlxG.sound.music != null)
+				FlxG.sound.music.time = (currentBeat * 60 / bpm) * 1000;
+
+			var hitIdx = -1;
+			for (i in 0...events.length)
 			{
-				currentBeat = clickBeat;
-				if (playing && FlxG.sound.music != null)
-					FlxG.sound.music.time = (currentBeat * 60 / bpm) * 1000;
+				var evt = events[i];
+				var ex = 10 + evt.beat * timelineBeatWidth - timelineOffset;
+				if (FlxG.mouse.x >= ex - 6 && FlxG.mouse.x <= ex + 6)
+				{
+					hitIdx = i;
+					break;
+				}
+			}
+
+			if (hitIdx >= 0)
+			{
+				selectEvent(hitIdx);
+				refreshEventList();
+				dragging = true;
+			}
+			else
+			{
+				beatInput.value = clickBeat;
+				formBeat = clickBeat;
+				onAddEvent();
 			}
 		}
+
+		// Click on event list to select
+		if (FlxG.mouse.justPressed && FlxG.mouse.x < eventListBg.width && FlxG.mouse.y >= eventListBg.y + 18)
+		{
+			var idx = Std.int((FlxG.mouse.y - eventListBg.y - 18) / 16) + scrollOffset;
+			if (idx >= 0 && idx < events.length)
+			{
+				selectEvent(idx);
+				refreshEventList();
+			}
+		}
+
+		// Drag events on timeline
+		if (FlxG.mouse.pressed && selectedEvent >= 0 && selectedEvent < events.length && dragging)
+		{
+			var evt = events[selectedEvent];
+			var newBeat = Math.max(0, (FlxG.mouse.x + timelineOffset - 10) / timelineBeatWidth);
+			evt.beat = newBeat;
+			refreshEventList();
+			updateCodePreview();
+		}
+		if (FlxG.mouse.justReleased) dragging = false;
 
 		// Number keys to select events (1-9, 0)
 		var numKey:Int = -1;
