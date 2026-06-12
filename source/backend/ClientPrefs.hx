@@ -78,6 +78,7 @@ import states.TitleState;
 	public var loadingScreen:Bool = true;
 	public var language:String = 'en-US';
 
+	public var audioVisualizer:Bool = true;
 	public var allowReloadState:Bool = true;
 	public var allowConsole:Bool = false;
 	public var allowScreenshot:Bool = true;

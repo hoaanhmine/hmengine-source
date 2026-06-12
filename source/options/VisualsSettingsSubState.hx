@@ -129,6 +129,12 @@ class VisualsSettingsSubState extends BaseOptionsMenu
 		addOption(option);
 		option.onChange = onChangeFPSCounter;
 		#end
+
+		var option:Option = new Option('Audio Visualizer',
+			'If checked, shows a frequency spectrum visualizer in the main menu and gameplay.',
+			'audioVisualizer',
+			BOOL);
+		addOption(option);
 		
 		var option:Option = new Option('Pause Music:',
 			"What song do you prefer for the Pause Screen?",

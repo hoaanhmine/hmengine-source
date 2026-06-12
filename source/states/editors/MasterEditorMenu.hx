@@ -11,6 +11,7 @@ class MasterEditorMenu extends MusicBeatState
 {
 	var options:Array<String> = [
 		'Chart Editor',
+		'Modchart Editor',
 		'Character Editor',
 		'Stage Editor',
 		'Week Editor',
@@ -105,9 +106,11 @@ class MasterEditorMenu extends MusicBeatState
 		if (controls.ACCEPT)
 		{
 			switch(options[curSelected]) {
-				case 'Chart Editor'://felt it would be cool maybe
-					LoadingState.loadAndSwitchState(new ChartingState(), false);
-				case 'Character Editor':
+			case 'Chart Editor'://felt it would be cool maybe
+				LoadingState.loadAndSwitchState(new ChartingState(), false);
+			case 'Modchart Editor':
+				MusicBeatState.switchState(new ModchartEditorState());
+			case 'Character Editor':
 					LoadingState.loadAndSwitchState(new CharacterEditorState(Character.DEFAULT_CHARACTER, false));
 				case 'Stage Editor':
 					LoadingState.loadAndSwitchState(new StageEditorState());

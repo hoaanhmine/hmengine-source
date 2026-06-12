@@ -460,6 +460,16 @@ class PlayState extends MusicBeatState
 		add(uiGroup);
 		add(noteGroup);
 
+		if (ClientPrefs.data.audioVisualizer)
+		{
+			var vis = new objects.AudioVisualizer(0, 0, FlxG.width, FlxG.height, 64);
+			vis.alpha = 0.08;
+			vis.blend = ADD;
+			vis.antialiasing = ClientPrefs.data.antialiasing;
+			vis.cameras = [camHUD];
+			uiGroup.add(vis);
+		}
+
 		Conductor.songPosition = -Conductor.crochet * 5 + Conductor.offset;
 		var showTime:Bool = (ClientPrefs.data.timeBarType != 'Disabled');
 		timeTxt = new FlxText(STRUM_X + (FlxG.width / 2) - 248, 19, 400, "", 32);
@@ -1207,6 +1217,15 @@ class PlayState extends MusicBeatState
 		FlxG.sound.music.onComplete = finishSong.bind();
 		vocals.play();
 		opponentVocals.play();
+
+		for (member in uiGroup.members)
+		{
+			if (Std.isOfType(member, objects.AudioVisualizer))
+			{
+				cast(member, objects.AudioVisualizer).reinit();
+				break;
+			}
+		}
 
 		setSongTime(Math.max(0, startOnTime - 500) + Conductor.offset);
 		startOnTime = 0;
